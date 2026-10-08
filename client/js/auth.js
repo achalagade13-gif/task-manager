@@ -60,14 +60,22 @@ const auth = {
 
   async fetchCurrentUser() {
     try {
-      const res = await window.api.get('/auth/me');
+      // skipAuthRedirect: true — this is a soft background refresh.
+      // A 401 here (e.g. Supabase cold start on Vercel) must NOT wipe
+      // the token or redirect the user back to login.
+      const res = await window.api.request('/auth/me', {
+        method: 'GET',
+        skipAuthRedirect: true
+      });
       if (res.success && res.data && res.data.user) {
         this.setUser(res.data.user);
         this.renderUserUI(res.data.user);
         return res.data.user;
       }
     } catch (err) {
-      console.error('Failed to refresh user profile:', err);
+      // Silently ignore — the user already has a valid local token.
+      // They'll be re-validated on the next real API call.
+      console.warn('Background profile refresh failed (non-fatal):', err.message);
     }
     return null;
   },

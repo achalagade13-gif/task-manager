@@ -32,16 +32,26 @@ class ApiClient {
       ...(options.body && { body: JSON.stringify(options.body) })
     };
 
+    // skipAuthRedirect: true means this is a soft background request
+    // (e.g. profile refresh). A 401 should NOT wipe token or redirect.
+    const skipAuthRedirect = options.skipAuthRedirect === true;
+
     try {
       const response = await fetch(url, config);
       const data = await response.json().catch(() => ({}));
 
-      // Handle 401 Unauthorized (Expired or Invalid Token)
+      // Handle 401 Unauthorized — only force-logout for real protected routes,
+      // never for soft background refreshes or auth endpoints
       if (response.status === 401) {
-        if (!endpoint.includes('/auth/login') && !endpoint.includes('/auth/register')) {
+        const isAuthEndpoint =
+          endpoint.includes('/auth/login') ||
+          endpoint.includes('/auth/register');
+
+        if (!isAuthEndpoint && !skipAuthRedirect) {
           this.setToken(null);
           localStorage.removeItem('tm_user');
-          if (window.location.pathname !== '/login' && window.location.pathname !== '/register' && window.location.pathname !== '/') {
+          const path = window.location.pathname;
+          if (path !== '/login' && path !== '/register' && path !== '/') {
             window.location.href = '/login?expired=true';
           }
         }

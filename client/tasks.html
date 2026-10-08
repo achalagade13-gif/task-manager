@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Task Manager Pro — Manage, organize, filter, and sort tasks">
+  <title>Task Management — Task Manager Pro</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">✓</div>
+        <span class="brand-title">TaskFlow Pro</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu</span>
+        <a href="/dashboard" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="/tasks" class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          All Tasks
+        </a>
+        <a href="/tasks?status=in-progress" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          In Progress
+        </a>
+        <a href="/tasks?status=overdue" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          Overdue Tasks
+        </a>
+
+        <span class="nav-section-title" style="margin-top:1rem;">Account</span>
+        <a href="/profile" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Profile & Security
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <img src="" alt="Avatar" class="user-avatar js-user-avatar">
+          <div class="user-info">
+            <div class="user-name js-user-name">Loading...</div>
+            <div class="user-email js-user-email">...</div>
+          </div>
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="auth.logout()" title="Sign Out">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <h1 class="page-title">Tasks</h1>
+            <span class="badge" id="tasksCountBadge" style="background:var(--bg-tertiary); color:var(--text-secondary);">0 tasks</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <!-- View switcher buttons -->
+          <div style="display:inline-flex; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-color);">
+            <button id="listViewBtn" class="btn btn-primary btn-sm" onclick="switchView('list')" title="List View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </button>
+            <button id="kanbanViewBtn" class="btn btn-secondary btn-sm" onclick="switchView('kanban')" title="Kanban Board View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="11" rx="1"></rect></svg>
+            </button>
+          </div>
+
+          <!-- Export dropdown or trigger -->
+          <button class="btn btn-secondary btn-sm" onclick="exportTasks('json')" title="Export tasks to JSON">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export
+          </button>
+
+          <button class="btn btn-primary" onclick="openCreateTaskModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New Task
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <!-- Filter, Search & Sort Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-input-wrap">
+              <div class="input-icon-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input 
+                  type="text" 
+                  id="searchInput" 
+                  class="form-control" 
+                  placeholder="Search by title, description, or #tag..." 
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar-right">
+            <!-- Status Filter -->
+            <select id="filterStatus" class="filter-select">
+              <option value="all">All Statuses</option>
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="pending">All Pending</option>
+              <option value="overdue">Overdue</option>
+            </select>
+
+            <!-- Priority Filter -->
+            <select id="filterPriority" class="filter-select">
+              <option value="all">All Priorities</option>
+              <option value="low">🟢 Low Priority</option>
+              <option value="medium">🔵 Medium Priority</option>
+              <option value="high">🟠 High Priority</option>
+              <option value="urgent">🔴 Urgent Priority</option>
+            </select>
+
+            <!-- Sort By -->
+            <select id="filterSort" class="filter-select">
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="dueDate">Sort: Due Date</option>
+              <option value="priority">Sort: Priority (High to Low)</option>
+              <option value="title">Sort: Alphabetical (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="tasksLoading" style="text-align:center; padding:3rem 0; display:none;">
+          <div style="display:inline-block; width:36px; height:36px; border:3px solid rgba(99,102,241,0.2); border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+          <p class="mt-1" style="font-size:0.9rem;">Fetching tasks...</p>
+        </div>
+
+        <!-- Task List or Kanban Board Container -->
+        <div id="tasksContainer"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Create / Edit Task Modal -->
+  <div class="modal-backdrop" id="taskModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="taskModalTitle">Create Task</h3>
+        <button class="btn btn-ghost btn-icon" onclick="utils.closeModal('taskModal')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <form id="taskForm">
+        <input type="hidden" id="taskId" value="" />
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="taskTitle">Task Title *</label>
+            <input 
+              type="text" 
+              id="taskTitle" 
+              class="form-control" 
+              placeholder="e.g. Implement user authentication tests" 
+              required 
+              maxlength="120"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="taskDesc">Description</label>
+            <textarea 
+              id="taskDesc" 
+              class="form-control" 
+              placeholder="Add comprehensive notes, requirements, or links..."
+              rows="3"
+              maxlength="2000"
+            ></textarea>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="taskStatus">Status</label>
+              <select id="taskStatus" class="form-control">
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="taskPriority">Priority</label>
+              <select id="taskPriority" class="form-control">
+                <option value="low">🟢 Low</option>
+                <option value="medium" selected>🔵 Medium</option>
+                <option value="high">🟠 High</option>
+                <option value="urgent">🔴 Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="taskDueDate">Due Date</label>
+              <input type="date" id="taskDueDate" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="taskTags">Tags (comma-separated)</label>
+              <input 
+                type="text" 
+                id="taskTags" 
+                class="form-control" 
+                placeholder="work, frontend, release" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="utils.closeModal('taskModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/tasks.js"></script>
+</body>
+</html>

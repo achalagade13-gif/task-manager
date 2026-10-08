@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Task Manager Pro — A modern, full-stack task and productivity management suite.">
+  <title>Task Manager Pro — Modern Productivity & Task Management</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Landing Nav -->
+  <nav style="display:flex; align-items:center; justify-content:space-between; padding:1.5rem 3rem; max-width:1400px; margin:0 auto; position:relative; z-index:10;">
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div class="brand-logo">✓</div>
+      <span class="brand-title" style="font-size:1.35rem; font-weight:800;">TaskFlow Pro</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <a href="/login" class="btn btn-secondary">Sign In</a>
+      <a href="/register" class="btn btn-primary">Get Started Free</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main style="max-width:1200px; margin:4rem auto; padding:0 2rem; text-align:center; position:relative; z-index:10;">
+    <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(99, 102, 241, 0.12); border:1px solid rgba(99, 102, 241, 0.3); padding:0.35rem 1rem; border-radius:999px; font-size:0.85rem; font-weight:600; color:var(--primary); margin-bottom:1.5rem;">
+      ✨ Full-Stack Modern Task Suite
+    </div>
+
+    <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight:800; line-height:1.15; margin-bottom:1.25rem;">
+      Master Your Workflow with <br>
+      <span style="background:linear-gradient(135deg, #6366f1, #06b6d4, #a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+        Clarity & Effortless Precision
+      </span>
+    </h1>
+
+    <p style="font-size:1.15rem; color:var(--text-secondary); max-width:650px; margin:0 auto 2.5rem; line-height:1.6;">
+      Organize tasks by priority, track due dates, visualize productivity metrics with dynamic dashboards, and switch between List and Kanban views effortlessly.
+    </p>
+
+    <div style="display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; margin-bottom:3.5rem;">
+      <a href="/register" class="btn btn-primary" style="padding:0.9rem 2rem; font-size:1.05rem;">
+        Start Managing Tasks
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+      <a href="/login" class="btn btn-secondary" style="padding:0.9rem 1.75rem; font-size:1.05rem;">
+        Explore Live Demo
+      </a>
+    </div>
+
+    <!-- Feature Grid -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; text-align:left; margin-top:3rem;">
+      <div class="card" style="margin-bottom:0;">
+        <div class="stat-icon" style="margin-bottom:1rem; background:rgba(99, 102, 241, 0.15); color:var(--primary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polyline><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        </div>
+        <h3 style="font-size:1.15rem; margin-bottom:0.4rem;">List & Kanban Views</h3>
+        <p style="font-size:0.875rem;">Switch seamlessly between structured list ordering and visual 3-column Kanban workflow boards.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:0;">
+        <div class="stat-icon" style="margin-bottom:1rem; background:rgba(6, 182, 212, 0.15); color:var(--accent-cyan);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </div>
+        <h3 style="font-size:1.15rem; margin-bottom:0.4rem;">Smart Analytics & Stats</h3>
+        <p style="font-size:0.875rem;">Real-time completion metrics, overdue reminders, priority breakdown, and today's schedule at a glance.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:0;">
+        <div class="stat-icon" style="margin-bottom:1rem; background:rgba(16, 185, 129, 0.15); color:var(--color-completed);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <h3 style="font-size:1.15rem; margin-bottom:0.4rem;">Secure JWT & MongoDB</h3>
+        <p style="font-size:0.875rem;">Strict bcrypt encryption, rate limiting, isolated user data schemas, and modern REST APIs.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Auto redirect if already logged in
+    if (auth.isAuthenticated()) {
+      window.location.href = '/dashboard';
+    }
+  </script>
+</body>
+</html>

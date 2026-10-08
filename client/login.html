@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign into your Task Manager Pro account.">
+  <title>Sign In — Task Manager Pro</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="/" style="display:inline-block;">
+          <div class="brand-logo">✓</div>
+        </a>
+        <h1 class="auth-title">Welcome Back</h1>
+        <p>Sign in to continue to your dashboard</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email Address</label>
+          <div class="input-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <input 
+              type="email" 
+              id="loginEmail" 
+              class="form-control" 
+              placeholder="name@example.com" 
+              required 
+              autocomplete="email"
+            />
+          </div>
+          <div id="loginEmailError" class="form-error"></div>
+        </div>
+
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem;">
+            <label class="form-label" for="loginPassword" style="margin-bottom:0;">Password</label>
+          </div>
+          <div class="input-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input 
+              type="password" 
+              id="loginPassword" 
+              class="form-control" 
+              placeholder="••••••••" 
+              required 
+              autocomplete="current-password"
+            />
+          </div>
+          <div id="loginPasswordError" class="form-error"></div>
+        </div>
+
+        <button type="submit" id="loginSubmitBtn" class="btn btn-primary" style="width:100%; padding:0.8rem; margin-top:0.5rem;">
+          Sign In
+        </button>
+
+        <!-- Quick Demo Account Fill -->
+        <button type="button" id="demoAccountBtn" class="btn btn-secondary" style="width:100%; padding:0.65rem; margin-top:0.75rem; font-size:0.85rem;">
+          ⚡ Quick Demo Login
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="/register" style="font-weight:600;">Create one now</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Redirect if already logged in
+    auth.checkAuthGuard(true);
+
+    const loginForm = document.getElementById('loginForm');
+    const demoBtn = document.getElementById('demoAccountBtn');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+
+    // Quick demo autofill handler
+    demoBtn.addEventListener('click', async () => {
+      document.getElementById('loginEmail').value = 'demo@taskmanager.local';
+      document.getElementById('loginPassword').value = 'DemoPass123!';
+      
+      // Auto-trigger registration if demo account doesn't exist yet
+      try {
+        await auth.register('Demo User', 'demo@taskmanager.local', 'DemoPass123!');
+        utils.showToast('Demo account initialized!', 'success');
+        window.location.href = '/dashboard';
+      } catch (e) {
+        // If already exists, attempt login
+        try {
+          await auth.login('demo@taskmanager.local', 'DemoPass123!');
+          utils.showToast('Logged in as Demo User!', 'success');
+          window.location.href = '/dashboard';
+        } catch (err) {
+          utils.showToast(err.message, 'error');
+        }
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      document.getElementById('loginEmailError').textContent = '';
+      document.getElementById('loginPasswordError').textContent = '';
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in...';
+
+      try {
+        await auth.login(email, password);
+        utils.showToast('Login successful! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 400);
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+
+        if (err.errors) {
+          if (err.errors.email) document.getElementById('loginEmailError').textContent = err.errors.email;
+          if (err.errors.password) document.getElementById('loginPasswordError').textContent = err.errors.password;
+        }
+        utils.showToast(err.message || 'Invalid email or password', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

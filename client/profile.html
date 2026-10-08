@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Task Manager Pro — User Profile & Security Settings">
+  <title>Profile & Settings — Task Manager Pro</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">✓</div>
+        <span class="brand-title">TaskFlow Pro</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu</span>
+        <a href="/dashboard" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="/tasks" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          All Tasks
+        </a>
+        <a href="/tasks?status=in-progress" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          In Progress
+        </a>
+        <a href="/tasks?status=overdue" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          Overdue Tasks
+        </a>
+
+        <span class="nav-section-title" style="margin-top:1rem;">Account</span>
+        <a href="/profile" class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Profile & Security
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <img src="" alt="Avatar" class="user-avatar js-user-avatar">
+          <div class="user-info">
+            <div class="user-name js-user-name">Loading...</div>
+            <div class="user-email js-user-email">...</div>
+          </div>
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="auth.logout()" title="Sign Out">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <h1 class="page-title">Profile & Security</h1>
+        </div>
+      </header>
+
+      <main class="page-content" style="max-width:900px;">
+        <!-- User Bio Card -->
+        <div class="card" style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+          <img src="" alt="Avatar" class="user-avatar js-user-avatar" style="width:72px; height:72px; border-width:3px;">
+          <div style="flex:1; min-width:200px;">
+            <h2 class="js-user-name" style="font-size:1.35rem; margin-bottom:0.2rem;"></h2>
+            <p class="js-user-email" style="font-size:0.875rem; margin-bottom:0.5rem;"></p>
+            <span class="badge" style="background:rgba(99,102,241,0.15); color:var(--primary);">Active Member</span>
+          </div>
+        </div>
+
+        <!-- Profile Information Form -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Personal Information</h3>
+          </div>
+          <form id="profileForm">
+            <div class="form-group">
+              <label class="form-label" for="profileName">Full Name</label>
+              <input type="text" id="profileName" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="profileEmail">Email Address</label>
+              <input type="email" id="profileEmail" class="form-control" disabled style="opacity:0.6; cursor:not-allowed;" />
+              <small style="color:var(--text-muted); font-size:0.75rem;">Email address cannot be modified once registered.</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="profileBio">Bio / Headline</label>
+              <textarea id="profileBio" class="form-control" rows="3" placeholder="Tell us a little about your role or goals..."></textarea>
+            </div>
+
+            <button type="submit" id="saveProfileBtn" class="btn btn-primary">Save Profile Changes</button>
+          </form>
+        </div>
+
+        <!-- Security / Password Form -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Security & Password</h3>
+          </div>
+          <form id="passwordForm">
+            <div class="form-group">
+              <label class="form-label" for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" class="form-control" required placeholder="••••••••" />
+              <div id="currentPasswordError" class="form-error"></div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="form-group">
+                <label class="form-label" for="newPassword">New Password (min 6 chars)</label>
+                <input type="password" id="newPassword" class="form-control" required minlength="6" placeholder="••••••••" />
+                <div id="newPasswordError" class="form-error"></div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="confirmNewPassword">Confirm New Password</label>
+                <input type="password" id="confirmNewPassword" class="form-control" required minlength="6" placeholder="••••••••" />
+                <div id="confirmPasswordError" class="form-error"></div>
+              </div>
+            </div>
+
+            <button type="submit" id="changePasswordBtn" class="btn btn-secondary">Update Password</button>
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      auth.checkAuthGuard(false);
+
+      const user = await auth.fetchCurrentUser();
+      if (user) {
+        document.getElementById('profileName').value = user.name || '';
+        document.getElementById('profileEmail').value = user.email || '';
+        document.getElementById('profileBio').value = user.bio || '';
+      }
+
+      // Profile Form Submit
+      document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('profileName').value.trim();
+        const bio = document.getElementById('profileBio').value.trim();
+
+        const btn = document.getElementById('saveProfileBtn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        try {
+          await auth.updateProfile({ name, bio });
+          utils.showToast('Profile updated successfully!', 'success');
+        } catch (err) {
+          utils.showToast(err.message || 'Failed to update profile', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Save Profile Changes';
+        }
+      });
+
+      // Password Form Submit
+      document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+        document.getElementById('currentPasswordError').textContent = '';
+        document.getElementById('newPasswordError').textContent = '';
+        document.getElementById('confirmPasswordError').textContent = '';
+
+        if (newPassword !== confirmNewPassword) {
+          document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+          utils.showToast('New passwords do not match', 'error');
+          return;
+        }
+
+        const btn = document.getElementById('changePasswordBtn');
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+
+        try {
+          await auth.changePassword(currentPassword, newPassword);
+          utils.showToast('Password updated successfully!', 'success');
+          document.getElementById('passwordForm').reset();
+        } catch (err) {
+          if (err.errors && err.errors.currentPassword) {
+            document.getElementById('currentPasswordError').textContent = err.errors.currentPassword;
+          }
+          utils.showToast(err.message || 'Failed to update password', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Update Password';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

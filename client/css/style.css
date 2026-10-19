@@ -895,6 +895,7 @@ textarea.form-control {
   z-index: 100;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: all var(--transition-normal);
   padding: 1rem;
 }
@@ -902,6 +903,7 @@ textarea.form-control {
 .modal-backdrop.is-open {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .modal-content {

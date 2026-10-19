@@ -324,6 +324,13 @@ function openCreateTaskModal() {
   document.getElementById('taskId').value = '';
   document.getElementById('taskForm').reset();
   utils.openModal('taskModal');
+  setTimeout(() => {
+    document.getElementById('taskTitle')?.focus();
+  }, 80);
+}
+
+function closeTaskModal() {
+  utils.closeModal('taskModal');
 }
 
 function openEditTaskModal(taskId) {
@@ -353,6 +360,8 @@ function openEditTaskModal(taskId) {
 
 async function handleTaskFormSubmit(e) {
   e.preventDefault();
+  const form = e.target;
+  const submitBtn = form.querySelector('button[type="submit"]');
   const taskId = document.getElementById('taskId').value;
   const title = document.getElementById('taskTitle').value.trim();
   const description = document.getElementById('taskDesc').value.trim();
@@ -375,6 +384,11 @@ async function handleTaskFormSubmit(e) {
     tags: tagsVal
   };
 
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving...';
+  }
+
   try {
     if (taskId) {
       await api.put(`/tasks/${taskId}`, payload);
@@ -384,10 +398,15 @@ async function handleTaskFormSubmit(e) {
       utils.showToast('Task created successfully!', 'success');
     }
 
-    utils.closeModal('taskModal');
+    closeTaskModal();
     loadTasks();
   } catch (err) {
     utils.showToast(err.message || 'Failed to save task', 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save Task';
+    }
   }
 }
 
@@ -453,6 +472,7 @@ function exportTasks(format = 'json') {
 window.switchView = switchView;
 window.toggleTaskStatus = toggleTaskStatus;
 window.openCreateTaskModal = openCreateTaskModal;
+window.closeTaskModal = closeTaskModal;
 window.openEditTaskModal = openEditTaskModal;
 window.confirmDeleteTask = confirmDeleteTask;
 window.exportTasks = exportTasks;

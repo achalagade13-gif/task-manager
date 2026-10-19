@@ -147,8 +147,41 @@ async function toggleTaskStatusFromDashboard(taskId, isChecked) {
   }
 }
 
+function openCreateTaskModal() {
+  utils.openModal('createTaskModal');
+  const titleInput = document.getElementById('quickTaskTitle');
+  if (titleInput) {
+    setTimeout(() => titleInput.focus(), 80);
+  }
+}
+
+function closeCreateTaskModal() {
+  utils.closeModal('createTaskModal');
+}
+
 function setupQuickCreateForm() {
   const form = document.getElementById('quickTaskForm');
+  const openBtn = document.getElementById('openCreateTaskModalBtn');
+  const modal = document.getElementById('createTaskModal');
+
+  if (openBtn) {
+    openBtn.addEventListener('click', openCreateTaskModal);
+  }
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeCreateTaskModal();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeCreateTaskModal();
+    }
+  });
+
   if (!form) return;
 
   form.addEventListener('submit', async (e) => {
@@ -156,10 +189,16 @@ function setupQuickCreateForm() {
     const titleInput = document.getElementById('quickTaskTitle');
     const priorityInput = document.getElementById('quickTaskPriority');
     const dueInput = document.getElementById('quickTaskDueDate');
+    const submitBtn = form.querySelector('button[type="submit"]');
 
     if (!titleInput.value.trim()) {
       utils.showToast('Please enter a task title', 'error');
       return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating...';
     }
 
     try {
@@ -171,12 +210,19 @@ function setupQuickCreateForm() {
 
       utils.showToast('Task created successfully!', 'success');
       form.reset();
-      utils.closeModal('createTaskModal');
+      closeCreateTaskModal();
       loadDashboardData();
     } catch (err) {
       utils.showToast(err.message || 'Failed to create task', 'error');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Task';
+      }
     }
   });
 }
 
+window.openCreateTaskModal = openCreateTaskModal;
+window.closeCreateTaskModal = closeCreateTaskModal;
 window.toggleTaskStatusFromDashboard = toggleTaskStatusFromDashboard;

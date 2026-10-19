@@ -21,6 +21,7 @@ const router = express.Router();
 const authLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
   max: parseInt(process.env.AUTH_RATE_LIMIT_MAX, 10) || 20,
+  skip: () => !!process.env.VERCEL, // Disable on Vercel (no shared memory store)
   message: {
     success: false,
     message: 'Too many authentication attempts from this IP, please try again after 15 minutes'

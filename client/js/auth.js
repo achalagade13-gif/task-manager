@@ -47,15 +47,17 @@ const auth = {
   },
 
   async logout() {
+    // Clear auth state synchronously first to prevent race conditions
+    window.api.setToken(null);
+    this.setUser(null);
     try {
-      await window.api.post('/auth/logout', {});
+      // Fire-and-forget server-side logout (best effort)
+      await fetch('/api/auth/logout', { method: 'POST' });
     } catch (e) {
-      // Ignore network failure on logout
-    } finally {
-      window.api.setToken(null);
-      this.setUser(null);
-      window.location.href = '/login';
+      // Ignore network failure — client-side state is already cleared
     }
+    // Use replace() so the dashboard isn't in browser history
+    window.location.replace('/login');
   },
 
   async fetchCurrentUser() {

@@ -375,13 +375,18 @@ async function handleTaskFormSubmit(e) {
     return;
   }
 
+  // Parse tags from comma-separated string into a proper array
+  const tagsArray = tagsVal
+    ? tagsVal.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean)
+    : [];
+
   const payload = {
     title,
     description,
     status,
     priority,
     dueDate: dueDateVal || null,
-    tags: tagsVal
+    tags: tagsArray
   };
 
   if (submitBtn) {

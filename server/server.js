@@ -44,9 +44,13 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Global Rate Limiting
+// NOTE: In-memory store is NOT shared across Vercel serverless instances.
+// Rate limiting is effectively disabled on Vercel (Vercel has edge-level protection).
+const isVercel = !!process.env.VERCEL;
 const globalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
   max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 300,
+  skip: () => isVercel, // Disable on Vercel serverless (no shared memory)
   message: {
     success: false,
     message: 'Too many requests from this IP address, please try again later.'

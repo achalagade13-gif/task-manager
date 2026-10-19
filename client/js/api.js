@@ -3,6 +3,10 @@
  */
 const API_BASE_URL = '/api';
 
+// Track consecutive 401s to avoid false logouts from serverless cold starts
+let _consecutive401s = 0;
+const MAX_401_BEFORE_LOGOUT = 2;
+
 class ApiClient {
   static getToken() {
     return localStorage.getItem('tm_token');
@@ -11,6 +15,7 @@ class ApiClient {
   static setToken(token) {
     if (token) {
       localStorage.setItem('tm_token', token);
+      _consecutive401s = 0; // reset on fresh token
     } else {
       localStorage.removeItem('tm_token');
     }
@@ -32,29 +37,37 @@ class ApiClient {
       ...(options.body && { body: JSON.stringify(options.body) })
     };
 
-    // skipAuthRedirect: true means this is a soft background request
-    // (e.g. profile refresh). A 401 should NOT wipe token or redirect.
+    // skipAuthRedirect: true means this is a soft background request.
+    // A 401 here must NOT wipe the token or redirect.
     const skipAuthRedirect = options.skipAuthRedirect === true;
 
     try {
       const response = await fetch(url, config);
       const data = await response.json().catch(() => ({}));
 
-      // Handle 401 Unauthorized — only force-logout for real protected routes,
-      // never for soft background refreshes or auth endpoints
       if (response.status === 401) {
         const isAuthEndpoint =
           endpoint.includes('/auth/login') ||
           endpoint.includes('/auth/register');
 
         if (!isAuthEndpoint && !skipAuthRedirect) {
-          this.setToken(null);
-          localStorage.removeItem('tm_user');
-          const path = window.location.pathname;
-          if (path !== '/login' && path !== '/register' && path !== '/') {
-            window.location.href = '/login?expired=true';
+          _consecutive401s++;
+
+          // Only force logout after multiple 401s — prevents false logout
+          // on serverless cold-start latency or transient DB errors
+          if (_consecutive401s >= MAX_401_BEFORE_LOGOUT) {
+            _consecutive401s = 0;
+            this.setToken(null);
+            localStorage.removeItem('tm_user');
+            const path = window.location.pathname;
+            if (path !== '/login' && path !== '/register' && path !== '/') {
+              window.location.href = '/login?expired=true';
+            }
           }
         }
+      } else {
+        // Reset on any successful response
+        if (response.ok) _consecutive401s = 0;
       }
 
       if (!response.ok) {

@@ -317,7 +317,7 @@ const fallbackDb = new InMemoryDatabase();
  * Returns the active Supabase client (live or fallback if unreachable/not configured)
  */
 const getSupabaseClient = () => {
-  if (isConfigured && supabase && liveIsReachable) {
+  if (isConfigured && supabase) {
     return supabase;
   }
   return fallbackDb;

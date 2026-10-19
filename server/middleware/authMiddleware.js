@@ -19,8 +19,17 @@ const protect = async (req, res, next) => {
     return errorResponse(res, 401, 'Access denied. No authentication token provided.');
   }
 
+  let decoded;
   try {
-    const decoded = verifyToken(token);
+    decoded = verifyToken(token);
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return errorResponse(res, 401, 'Session expired. Please log in again.');
+    }
+    return errorResponse(res, 401, 'Invalid authentication token.');
+  }
+
+  try {
     const user = await User.findById(decoded.id);
 
     if (!user) {
@@ -30,10 +39,8 @@ const protect = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return errorResponse(res, 401, 'Session expired. Please log in again.');
-    }
-    return errorResponse(res, 401, 'Invalid authentication token.');
+    console.error('[Protect Middleware] User lookup failed:', error.message);
+    return errorResponse(res, 500, 'Database error during authentication verification.');
   }
 };
 

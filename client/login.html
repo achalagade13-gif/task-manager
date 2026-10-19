@@ -79,6 +79,11 @@
     // Redirect if already logged in
     auth.checkAuthGuard(true);
 
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('expired') === 'true') {
+      utils.showToast('Your session has expired. Please sign in again.', 'warning');
+    }
+
     const loginForm = document.getElementById('loginForm');
     const demoBtn = document.getElementById('demoAccountBtn');
     const submitBtn = document.getElementById('loginSubmitBtn');

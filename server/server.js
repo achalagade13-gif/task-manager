@@ -112,14 +112,16 @@ const startServer = () => {
   });
 };
 
-// Boot: start HTTP first, then connect DB in background
-startServer().then((server) => {
-  // Non-blocking DB probe (never crashes the server)
-  connectDB().catch((err) => {
-    console.warn('[Supabase] Background connection probe failed:', err.message);
+// Boot: start HTTP first, then connect DB in background (only when not on Vercel serverless)
+if (!process.env.VERCEL) {
+  startServer().then((server) => {
+    // Non-blocking DB probe (never crashes the server)
+    connectDB().catch((err) => {
+      console.warn('[Supabase] Background connection probe failed:', err.message);
+    });
+    return server;
   });
-  return server;
-});
+}
 
 process.on('unhandledRejection', (err) => {
   console.error('[Unhandled Rejection]', err.message);
